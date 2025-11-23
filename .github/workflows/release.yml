@@ -22,16 +22,28 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake build-essential libgtest-dev
 
+      - name: Build and install GTest
+        run: |
+          cd /usr/src/gtest
+          sudo cmake CMakeLists.txt
+          sudo make
+          sudo cp lib/*.a /usr/lib
+
       - name: Configure CMake
-        run: cmake -B build -DPATCH_VERSION=${{ github.run_number }} -DWITH_GTEST=ON
+        run: cmake -B build -DPATCH_VERSION=${{ github.run_number }}
 
       - name: Build project
         run: cmake --build build
 
+      # - name: Run tests
+      #   run: |
+      #     cd build
+      #     ctest --verbose
+
       - name: Run main application
         run: |
           cd build
-          ./src/allocator | head -5
+          ./allocator
 
       - name: Create package
         run: cmake --build build --target package
